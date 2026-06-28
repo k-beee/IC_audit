@@ -83,6 +83,8 @@ You MUST respond strictly with a valid JSON object matching the schema below:
             cleaned = response.strip()
             if cleaned.startswith("```json"):
                 cleaned = cleaned[7:]
+            elif cleaned.startswith("```"):
+                cleaned = cleaned[3:]
             if cleaned.endswith("```"):
                 cleaned = cleaned[:-3]
             cleaned = cleaned.strip()
@@ -107,10 +109,38 @@ You MUST respond strictly with a valid JSON object matching the schema below:
             if not all(k in leader_json for k in required_keys) or not all(k in validator_json for k in required_keys):
                 return False
 
-            # Check if severity levels match, scores are within +/- 2, issues_count within +/- 1
-            severity_match = leader_json["severity"] == validator_json["severity"]
-            score_diff = abs(int(leader_json["score"]) - int(validator_json["score"])) <= 2
-            issues_diff = abs(int(leader_json["issues_count"]) - int(validator_json["issues_count"])) <= 1
+            def safe_int(val) -> int:
+                try:
+                    if isinstance(val, str):
+                        # Extract first number block (handles "8/10", "2 issues", etc.)
+                        val = val.split('/')[0].strip()
+                        digits = "".join([c for c in val if c.isdigit() or c == '-'])
+                        return int(digits)
+                    return int(val)
+                except Exception:
+                    return 0
+
+            # Map severity categories to numeric scores to allow a +/- 1 tolerance for subjective AI rating differences
+            severity_map = {
+                "critical": 5,
+                "high": 4,
+                "medium": 3,
+                "low": 2,
+                "clean": 1
+            }
+            
+            leader_sev = severity_map.get(str(leader_json.get("severity")).lower(), 1)
+            val_sev = severity_map.get(str(validator_json.get("severity")).lower(), 1)
+            
+            severity_match = abs(leader_sev - val_sev) <= 1
+            
+            leader_score = safe_int(leader_json.get("score"))
+            val_score = safe_int(validator_json.get("score"))
+            score_diff = abs(leader_score - val_score) <= 2
+            
+            leader_count = safe_int(leader_json.get("issues_count"))
+            val_count = safe_int(validator_json.get("issues_count"))
+            issues_diff = abs(leader_count - val_count) <= 1
             
             return severity_match and score_diff and issues_diff
 
