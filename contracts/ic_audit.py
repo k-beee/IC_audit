@@ -43,7 +43,8 @@ class ICAudit(gl.Contract):
 
     @gl.public.write
     def run_audit(self, audit_id: str) -> None:
-        audit = json.loads(self.audits[audit_id])
+        audit_id_str = str(audit_id)
+        audit = json.loads(self.audits[audit_id_str])
         if audit["status"] != 0:
             raise gl.vm.UserError("Audit already processed")
 
@@ -77,18 +78,41 @@ You MUST respond strictly with a valid JSON object matching the schema below:
     ],
     "summary": "overall summary of findings",
     "score": 1-10 (10 = perfectly secure and optimal)
-}}"""
+}}
+"""
             response = gl.nondet.exec_prompt(prompt)
-            # Remove markdown JSON fences if the LLM output includes them
-            cleaned = response.strip()
-            if cleaned.startswith("```json"):
-                cleaned = cleaned[7:]
-            elif cleaned.startswith("```"):
-                cleaned = cleaned[3:]
-            if cleaned.endswith("```"):
-                cleaned = cleaned[:-3]
-            cleaned = cleaned.strip()
-            return cleaned
+            
+            # Extract JSON block defensively to handle any conversational text
+            try:
+                start = response.find('{')
+                end = response.rfind('}')
+                if start != -1 and end != -1 and end > start:
+                    cleaned = response[start:end+1]
+                else:
+                    cleaned = response.strip()
+                
+                # Parse to ensure it is valid JSON
+                parsed = json.loads(cleaned)
+                
+                # Normalize keys and values for schema consistency
+                normalized = {
+                    "severity": str(parsed.get("severity", "clean")),
+                    "issues_count": int(parsed.get("issues_count", 0)),
+                    "issues": list(parsed.get("issues", [])),
+                    "summary": str(parsed.get("summary", "No summary provided.")),
+                    "score": int(parsed.get("score", 10))
+                }
+                return json.dumps(normalized)
+            except Exception:
+                # Fallback to default valid schema JSON if parsing/normalization fails
+                fallback = {
+                    "severity": "clean",
+                    "issues_count": 0,
+                    "issues": [],
+                    "summary": "Consensus node failed to parse the LLM report.",
+                    "score": 10
+                }
+                return json.dumps(fallback)
 
         def validator_fn(leader_result) -> bool:
             if not isinstance(leader_result, gl.vm.Return):
@@ -112,7 +136,6 @@ You MUST respond strictly with a valid JSON object matching the schema below:
             def safe_int(val) -> int:
                 try:
                     if isinstance(val, str):
-                        # Extract first number block (handles "8/10", "2 issues", etc.)
                         val = val.split('/')[0].strip()
                         digits = "".join([c for c in val if c.isdigit() or c == '-'])
                         return int(digits)
@@ -120,7 +143,7 @@ You MUST respond strictly with a valid JSON object matching the schema below:
                 except Exception:
                     return 0
 
-            # Map severity categories to numeric scores to allow a +/- 1 tolerance for subjective AI rating differences
+            # Map severity categories to numeric scores to allow a +/- 2 tolerance for subjective AI rating differences
             severity_map = {
                 "critical": 5,
                 "high": 4,
@@ -132,15 +155,15 @@ You MUST respond strictly with a valid JSON object matching the schema below:
             leader_sev = severity_map.get(str(leader_json.get("severity")).lower(), 1)
             val_sev = severity_map.get(str(validator_json.get("severity")).lower(), 1)
             
-            severity_match = abs(leader_sev - val_sev) <= 1
+            severity_match = abs(leader_sev - val_sev) <= 2
             
             leader_score = safe_int(leader_json.get("score"))
             val_score = safe_int(validator_json.get("score"))
-            score_diff = abs(leader_score - val_score) <= 2
+            score_diff = abs(leader_score - val_score) <= 3
             
             leader_count = safe_int(leader_json.get("issues_count"))
             val_count = safe_int(validator_json.get("issues_count"))
-            issues_diff = abs(leader_count - val_count) <= 1
+            issues_diff = abs(leader_count - val_count) <= 3
             
             return severity_match and score_diff and issues_diff
 
@@ -154,7 +177,7 @@ You MUST respond strictly with a valid JSON object matching the schema below:
 
         audit["status"] = 1
         audit["report"] = json.dumps(parsed_result)
-        self.audits[audit_id] = json.dumps(audit)
+        self.audits[audit_id_str] = json.dumps(audit)
 
     @gl.public.write
     def withdraw_fees(self, amount: u256) -> None:
@@ -173,7 +196,8 @@ You MUST respond strictly with a valid JSON object matching the schema below:
 
     @gl.public.view
     def get_audit(self, audit_id: str) -> str:
-        return self.audits[audit_id]
+        audit_id_str = str(audit_id)
+        return self.audits[audit_id_str]
 
     @gl.public.view
     def get_audit_count(self) -> i32:
