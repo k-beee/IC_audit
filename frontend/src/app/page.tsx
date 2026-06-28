@@ -557,6 +557,7 @@ export default function Home() {
                       <div className="text-[10px] font-mono text-gray-500 flex items-center space-x-1">
                         <Code2 className="w-3 h-3 text-indigo-400" />
                         <span>terminal // source_code.py</span>
+                        <span className="w-1.5 h-3 bg-emerald-500 ml-0.5 inline-block terminal-cursor" />
                       </div>
                       <div className="w-12" />
                     </div>

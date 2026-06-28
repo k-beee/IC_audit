@@ -116,3 +116,12 @@ body {
   animation: shimmer 2s infinite;
   content: '';
 }
+
+/* Blinking Cursor for Terminal emulation */
+@keyframes blink-cursor {
+  50% { opacity: 0; }
+}
+
+.terminal-cursor {
+  animation: blink-cursor 1.2s steps(1) infinite;
+}
