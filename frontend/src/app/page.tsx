@@ -30,6 +30,7 @@ import {
   Info,
   ChevronRight,
   UserCheck,
+  Loader2,
 } from "lucide-react";
 
 type AuditIssue = {
@@ -330,22 +331,15 @@ export default function Home() {
         </div>
       )}
 
-      {/* Loading Overlay */}
+      {/* Floating Pending Transaction Badge */}
       {loading && (
-        <div className="fixed inset-0 bg-gray-950/80 backdrop-blur-sm z-50 flex items-center justify-center">
-          <div className="glass-panel p-8 rounded-2xl max-w-sm w-full border border-gray-800 text-center flex flex-col items-center shadow-2xl">
-            <div className="w-14 h-14 rounded-full border-4 border-indigo-500/20 border-t-indigo-500 animate-spin flex items-center justify-center mb-5">
-              <Cpu className="w-5 h-5 text-indigo-400 animate-pulse" />
-            </div>
-            <h3 className="text-base font-bold text-white mb-2">Processing on GenLayer</h3>
-            <p className="text-xs text-gray-400 leading-relaxed max-w-xs mb-5">
-              Awaiting block confirmation. Please confirm in your wallet. AI validator consensus runs immediately on transaction finalization.
-            </p>
-            <div className="flex items-center space-x-2 text-[10px] text-indigo-400 font-semibold bg-indigo-950/30 px-3 py-1.5 rounded-full border border-indigo-800/30">
-              <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-ping" />
-              <span>Awaiting receipt...</span>
-            </div>
-          </div>
+        <div className="fixed bottom-6 right-6 z-50 glass-panel rounded-full shadow-2xl border border-indigo-500/20 bg-gray-900/90 backdrop-blur px-4 py-2 flex items-center space-x-2.5 text-xs font-semibold text-indigo-400">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+          </span>
+          <Loader2 className="w-3.5 h-3.5 text-indigo-400 animate-spin" />
+          <span>Awaiting GenLayer block receipt...</span>
         </div>
       )}
 
@@ -384,8 +378,12 @@ export default function Home() {
                   : "bg-indigo-600 text-white hover:bg-indigo-500 hover:shadow-indigo-500/10 active:scale-95"
               }`}
             >
-              <Wallet className="w-4 h-4" />
-              <span>{wallet.address ? truncateAddress(wallet.address) : "Connect Wallet"}</span>
+              {loading && !wallet.address ? (
+                <Loader2 className="w-4 h-4 animate-spin text-white" />
+              ) : (
+                <Wallet className="w-4 h-4" />
+              )}
+              <span>{wallet.address ? truncateAddress(wallet.address) : (loading ? "Authorizing..." : "Connect Wallet")}</span>
             </button>
           </div>
         </div>
@@ -486,10 +484,19 @@ export default function Home() {
                   <button
                     onClick={() => handleRunAudit(selectedAudit.id)}
                     disabled={loading}
-                    className="inline-flex items-center space-x-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-sm font-semibold px-6 py-2.5 rounded-xl shadow-lg hover:shadow-indigo-500/10 active:scale-95 transition"
+                    className="inline-flex items-center space-x-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-sm font-semibold px-6 py-2.5 rounded-xl shadow-lg hover:shadow-indigo-500/10 active:scale-95 transition-all disabled:opacity-50"
                   >
-                    <Play className="w-4 h-4 fill-white" />
-                    <span>Run AI Consensus Audit</span>
+                    {loading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin text-white" />
+                        <span>Processing Consensus...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Play className="w-4 h-4 fill-white" />
+                        <span>Run AI Consensus Audit</span>
+                      </>
+                    )}
                   </button>
                 </div>
               ) : parsedReport ? (
@@ -636,8 +643,17 @@ export default function Home() {
                       disabled={loading || !wallet.address}
                       className="w-full inline-flex items-center justify-center space-x-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold px-6 py-2.5 rounded-xl shadow hover:shadow-indigo-500/10 disabled:opacity-40 disabled:hover:bg-indigo-600 active:scale-[0.98] transition-all"
                     >
-                      <UserCheck className="w-4 h-4" />
-                      <span>Submit Audit Transaction</span>
+                      {loading ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin text-white" />
+                          <span>Submitting...</span>
+                        </>
+                      ) : (
+                        <>
+                          <UserCheck className="w-4 h-4" />
+                          <span>Submit Audit Transaction</span>
+                        </>
+                      )}
                     </button>
                   </div>
                 </div>
