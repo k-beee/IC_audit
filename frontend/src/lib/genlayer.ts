@@ -4,7 +4,7 @@ import type { GenLayerClient } from "genlayer-js/types";
 
 // The contract address can be provided via environment variable
 export const CONTRACT_ADDRESS = (process.env.NEXT_PUBLIC_CONTRACT_ADDRESS ||
-  "0xEcaA113193C3A6fF873A786ee38C866C73E29908") as `0x${string}`;
+  "0x5027c8D5235Ad90F8cc2EC22F230F5c0D079Ba1e") as `0x${string}`;
 
 declare global {
   interface Window {
