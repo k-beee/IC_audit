@@ -9,7 +9,7 @@ By executing a panel of independent AI models inside GenVM, IC Audit eliminates 
 ---
 
 ### 🌐 Live Deployment & Contract Details
-* **Live Application Dashboard:** [https://ic-audit.vercel.app](https://ic-audit.vercel.app)
+* **Live Application Dashboard:** [https://ic-audit-rho.vercel.app/](https://ic-audit-rho.vercel.app/)
 * **Deployed Contract Address:** [`0x5027c8D5235Ad90F8cc2EC22F230F5c0D079Ba1e`](https://explorer-studio.genlayer.com/address/0x5027c8D5235Ad90F8cc2EC22F230F5c0D079Ba1e)
 
 ---
