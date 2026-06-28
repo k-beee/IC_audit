@@ -67,6 +67,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<"submit" | "history">("submit");
   const [selectedAuditId, setSelectedAuditId] = useState<string | null>(null);
+  const [contractOwner, setContractOwner] = useState<string | null>(null);
   
   // Form states
   const [code, setCode] = useState("");
@@ -100,6 +101,21 @@ export default function Home() {
   const fetchAudits = useCallback(async () => {
     try {
       const readClient = getReadClient();
+      
+      // Fetch contract owner address dynamically once
+      try {
+        const ownerResult = await readClient.readContract({
+          address: CONTRACT_ADDRESS,
+          functionName: "get_owner",
+          args: [],
+        });
+        if (ownerResult) {
+          setContractOwner(ownerResult as string);
+        }
+      } catch (err) {
+        console.error("Error fetching contract owner:", err);
+      }
+
       const countResult = await readClient.readContract({
         address: CONTRACT_ADDRESS,
         functionName: "get_audit_count",
@@ -365,7 +381,7 @@ export default function Home() {
           </div>
 
           <div className="flex items-center space-x-4">
-            {wallet.address && (
+            {wallet.address && contractOwner && wallet.address.toLowerCase() === contractOwner.toLowerCase() && (
               <button
                 onClick={handleWithdrawFees}
                 className="hidden sm:inline-flex items-center px-3 py-1.5 text-xs border border-gray-800 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition"
@@ -624,24 +640,20 @@ export default function Home() {
                   />
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Audit Fee (GEN)</label>
-                    <div className="relative">
-                      <Coins className="absolute left-3.5 top-3 w-4 h-4 text-gray-500" />
-                      <input
-                        type="number"
-                        min="1"
-                        step="any"
-                        placeholder="1"
-                        value={fee}
-                        onChange={(e) => setFee(e.target.value)}
-                        required
-                        className="w-full rounded-xl pl-10 pr-4 py-2.5 text-xs glass-input"
-                      />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+                  <div className="bg-gray-900/40 border border-gray-800 rounded-xl px-4 py-3 flex items-center justify-between">
+                    <div className="flex items-center space-x-2.5">
+                      <Coins className="w-4 h-4 text-indigo-400" />
+                      <div>
+                        <span className="block text-[10px] text-gray-500 uppercase tracking-wider font-semibold">Fixed Audit Fee</span>
+                        <span className="text-xs font-bold text-white">1.0 GEN</span>
+                      </div>
                     </div>
+                    <span className="text-[9px] bg-indigo-950/50 text-indigo-400 border border-indigo-800/20 px-2 py-0.5 rounded-full font-medium">
+                      Required
+                    </span>
                   </div>
-                  <div className="flex flex-col justify-end">
+                  <div className="flex flex-col justify-end h-full pt-1.5 sm:pt-0">
                     <button
                       type="submit"
                       disabled={loading || !wallet.address}

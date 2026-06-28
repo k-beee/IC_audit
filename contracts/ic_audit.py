@@ -17,10 +17,10 @@ class ICAudit(gl.Contract):
 
     @gl.public.write.payable
     def request_audit(self, code: str, language: str, context: str, client_time: u64) -> i32:
-        # Require audit fee in GEN tokens
+        # Require audit fee in GEN tokens (minimum 1 GEN)
         value = gl.message.value
-        if value == u256(0):
-            raise gl.vm.UserError("Must pay audit fee")
+        if value < u256(1000000000000000000):
+            raise gl.vm.UserError("Audit fee must be at least 1 GEN")
 
         # Increment audit index
         self.audit_count = i32(int(self.audit_count) + 1)
@@ -202,3 +202,7 @@ You MUST respond strictly with a valid JSON object matching the schema below:
     @gl.public.view
     def get_audit_count(self) -> i32:
         return self.audit_count
+
+    @gl.public.view
+    def get_owner(self) -> Address:
+        return self.owner
