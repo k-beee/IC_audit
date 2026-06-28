@@ -851,7 +851,7 @@ export default function Home() {
               {CONTRACT_ADDRESS}
             </code>
             <a
-              href={`https://genlayer-explorer.vercel.app/address/${CONTRACT_ADDRESS}`}
+              href={`https://explorer-studio.genlayer.com/address/${CONTRACT_ADDRESS}`}
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center justify-center space-x-1 text-[10px] text-gray-500 hover:text-white transition mt-1.5"
