@@ -376,7 +376,7 @@ export default function Home() {
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col md:flex-row gap-8">
         
         {/* Left Side: Forms and Lists */}
-        <div className="flex-1 flex flex-col gap-6">
+        <div className="flex-1 min-w-0 flex flex-col gap-6">
           
           {/* Dashboard Navigation Tabs */}
           <div className="flex bg-gray-900/60 p-1.5 rounded-xl border border-gray-800 self-start">
@@ -446,12 +446,12 @@ export default function Home() {
               </div>
 
               {/* Submitted Code snippet */}
-              <div className="mb-6">
+              <div className="mb-6 w-full overflow-hidden">
                 <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 flex items-center">
                   <Code2 className="w-4 h-4 mr-1.5 text-indigo-400" />
                   Audit Target Code
                 </h3>
-                <pre className="bg-gray-950 border border-gray-800 rounded-xl p-4 overflow-auto max-h-64 text-xs font-mono text-emerald-400/90 leading-relaxed leading-5">
+                <pre className="w-full overflow-x-auto bg-gray-950 border border-gray-800 rounded-xl p-4 max-h-64 text-xs font-mono text-emerald-400/90 leading-relaxed leading-5">
                   <code>{selectedAudit.code}</code>
                 </pre>
               </div>
