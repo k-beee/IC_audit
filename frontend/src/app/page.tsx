@@ -330,6 +330,25 @@ export default function Home() {
         </div>
       )}
 
+      {/* Loading Overlay */}
+      {loading && (
+        <div className="fixed inset-0 bg-gray-950/80 backdrop-blur-sm z-50 flex items-center justify-center">
+          <div className="glass-panel p-8 rounded-2xl max-w-sm w-full border border-gray-800 text-center flex flex-col items-center shadow-2xl">
+            <div className="w-14 h-14 rounded-full border-4 border-indigo-500/20 border-t-indigo-500 animate-spin flex items-center justify-center mb-5">
+              <Cpu className="w-5 h-5 text-indigo-400 animate-pulse" />
+            </div>
+            <h3 className="text-base font-bold text-white mb-2">Processing on GenLayer</h3>
+            <p className="text-xs text-gray-400 leading-relaxed max-w-xs mb-5">
+              Awaiting block confirmation. Please confirm in your wallet. AI validator consensus runs immediately on transaction finalization.
+            </p>
+            <div className="flex items-center space-x-2 text-[10px] text-indigo-400 font-semibold bg-indigo-950/30 px-3 py-1.5 rounded-full border border-indigo-800/30">
+              <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-ping" />
+              <span>Awaiting receipt...</span>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Main Header */}
       <header className="border-b border-gray-800 bg-gray-900/60 backdrop-blur sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
