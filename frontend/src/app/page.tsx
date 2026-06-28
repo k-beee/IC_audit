@@ -413,7 +413,7 @@ export default function Home() {
           {/* Core App View */}
           {selectedAuditId && selectedAudit ? (
             /* Tab: Detail view */
-            <div className="glass-card rounded-2xl p-6 relative overflow-hidden">
+            <div className="glass-card rounded-2xl p-6 relative overflow-hidden w-full min-w-0">
               <button
                 onClick={() => setSelectedAuditId(null)}
                 className="inline-flex items-center space-x-1.5 text-xs text-indigo-400 hover:text-indigo-300 font-medium mb-6 transition"
@@ -536,7 +536,7 @@ export default function Home() {
             </div>
           ) : activeTab === "submit" ? (
             /* Tab: Submit Audit request */
-            <form onSubmit={handleSubmitAudit} className="glass-card rounded-2xl p-6">
+            <form onSubmit={handleSubmitAudit} className="glass-card rounded-2xl p-6 w-full min-w-0">
               <h2 className="text-lg font-bold text-white flex items-center space-x-2 mb-2">
                 <Sparkles className="w-5 h-5 text-indigo-400" />
                 <span>Submit New Review Request</span>
