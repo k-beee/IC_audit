@@ -180,6 +180,8 @@ export default function Home() {
       await wallet.client.waitForTransactionReceipt({
         hash,
         status: TransactionStatus.ACCEPTED,
+        interval: 3000,
+        retries: 100, // Wait for up to 5 minutes to prevent library timeouts on long consensus runs
       });
 
       showNotification("Audit requested successfully! Consensus panel initialized.", "success");
@@ -223,6 +225,8 @@ export default function Home() {
       await wallet.client.waitForTransactionReceipt({
         hash,
         status: TransactionStatus.ACCEPTED,
+        interval: 3000,
+        retries: 100, // Wait for up to 5 minutes to prevent library timeouts on long consensus runs
       });
 
       showNotification("AI Validator Consensus completed. Report published on-chain!", "success");
