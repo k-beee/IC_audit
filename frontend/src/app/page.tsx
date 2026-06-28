@@ -69,7 +69,7 @@ export default function Home() {
   
   // Form states
   const [code, setCode] = useState("");
-  const [language, setLanguage] = useState("Solidity");
+  const [language, setLanguage] = useState("Python");
   const [context, setContext] = useState("");
   const [fee, setFee] = useState("1");
 
@@ -538,16 +538,10 @@ export default function Home() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Contract Language</label>
-                  <select
-                    value={language}
-                    onChange={(e) => setLanguage(e.target.value)}
-                    className="w-full rounded-xl px-4 py-2.5 text-sm glass-input font-medium"
-                  >
-                    <option value="Solidity" className="bg-gray-900 text-white">Solidity</option>
-                    <option value="Python" className="bg-gray-900 text-white">Python (GenLayer)</option>
-                    <option value="Rust" className="bg-gray-900 text-white">Rust (WASM)</option>
-                    <option value="Move" className="bg-gray-900 text-white">Move</option>
-                  </select>
+                  <div className="w-full rounded-xl px-4 py-2.5 text-xs glass-input font-medium bg-gray-950/80 text-indigo-400 border border-gray-800/80 flex items-center space-x-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
+                    <span>Intelligent Contract (Python)</span>
+                  </div>
                 </div>
 
                 <div>
