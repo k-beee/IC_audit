@@ -125,3 +125,26 @@ You MUST respond strictly with a valid JSON object matching the schema below:
         audit["status"] = 1
         audit["report"] = json.dumps(parsed_result)
         self.audits[audit_id] = json.dumps(audit)
+
+    @gl.public.write
+    def withdraw_fees(self, amount: u256) -> None:
+        # Restrict access to the contract deployer (owner)
+        if gl.message.sender_address != self.owner:
+            raise gl.vm.UserError("Only owner can withdraw fees")
+        
+        # Send GEN tokens to the owner's address
+        @gl.evm.contract_interface
+        class _OwnerRecipient:
+            class View:
+                pass
+            class Write:
+                pass
+        _OwnerRecipient(self.owner).emit_transfer(value=amount)
+
+    @gl.public.view
+    def get_audit(self, audit_id: str) -> str:
+        return self.audits[audit_id]
+
+    @gl.public.view
+    def get_audit_count(self) -> i32:
+        return self.audit_count
