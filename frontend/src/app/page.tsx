@@ -79,6 +79,16 @@ export default function Home() {
 
   const [notification, setNotification] = useState<{ message: string; type: "success" | "error" | "info" } | null>(null);
 
+  const [cursorVisible, setCursorVisible] = useState(true);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCursorVisible((v) => !v);
+    }, 600);
+    return () => clearInterval(interval);
+  }, []);
+
+  const placeholderText = `# Paste your GenLayer Intelligent Contract (Python) code here...${cursorVisible ? " ▋" : ""}`;
+
   // Notify utility
   const showNotification = (message: string, type: "success" | "error" | "info" = "info") => {
     setNotification({ message, type });
@@ -557,18 +567,17 @@ export default function Home() {
                       <div className="text-[10px] font-mono text-gray-500 flex items-center space-x-1">
                         <Code2 className="w-3 h-3 text-indigo-400" />
                         <span>terminal // source_code.py</span>
-                        <span className="w-1.5 h-3 bg-emerald-500 ml-0.5 inline-block terminal-cursor" />
                       </div>
                       <div className="w-12" />
                     </div>
                     {/* Textarea inside terminal */}
                     <textarea
-                      placeholder="# Paste your GenLayer Intelligent Contract (Python) code here..."
+                      placeholder={placeholderText}
                       value={code}
                       onChange={(e) => setCode(e.target.value)}
                       required
                       rows={12}
-                      className="w-full bg-black/95 text-emerald-400 font-mono text-xs p-4 focus:ring-0 focus:outline-none resize-none border-0 leading-relaxed block shadow-inner placeholder-emerald-800/40"
+                      className="w-full bg-black/95 text-emerald-400 font-mono text-xs p-4 focus:ring-0 focus:outline-none resize-none border-0 leading-relaxed block shadow-inner placeholder-emerald-500/45"
                     />
                   </div>
                 </div>
