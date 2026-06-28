@@ -546,14 +546,30 @@ export default function Home() {
 
                 <div>
                   <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Contract Source Code</label>
-                  <textarea
-                    placeholder="Paste contract source code here..."
-                    value={code}
-                    onChange={(e) => setCode(e.target.value)}
-                    required
-                    rows={12}
-                    className="w-full rounded-xl p-4 text-xs glass-input code-textarea leading-relaxed text-emerald-400/90"
-                  />
+                  <div className="border border-gray-800 rounded-xl overflow-hidden shadow-lg shadow-black/50">
+                    {/* Mock Terminal Header */}
+                    <div className="bg-gray-900/90 px-4 py-2 border-b border-gray-800/80 flex items-center justify-between">
+                      <div className="flex items-center space-x-1.5">
+                        <span className="w-2.5 h-2.5 rounded-full bg-red-500/80 block" />
+                        <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/80 block" />
+                        <span className="w-2.5 h-2.5 rounded-full bg-green-500/80 block" />
+                      </div>
+                      <div className="text-[10px] font-mono text-gray-500 flex items-center space-x-1">
+                        <Code2 className="w-3 h-3 text-indigo-400" />
+                        <span>terminal // source_code.py</span>
+                      </div>
+                      <div className="w-12" />
+                    </div>
+                    {/* Textarea inside terminal */}
+                    <textarea
+                      placeholder="# Paste your GenLayer Intelligent Contract (Python) code here..."
+                      value={code}
+                      onChange={(e) => setCode(e.target.value)}
+                      required
+                      rows={12}
+                      className="w-full bg-black/95 text-emerald-400 font-mono text-xs p-4 focus:ring-0 focus:outline-none resize-none border-0 leading-relaxed block shadow-inner placeholder-emerald-800/40"
+                    />
+                  </div>
                 </div>
 
                 <div>
